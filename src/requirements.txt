@@ -1,0 +1,4 @@
+tensorflow
+opencv-contrib-python==4.1.2.30
+numpy
+git+https://github.com/lorenzobalzani/moviepy.git
