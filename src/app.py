@@ -1,11 +1,11 @@
 import moviepy.editor as mpy
-import time
-import argparse
+import time, argparse, logging, pdb, traceback
+from hand_pose import run_detection_hands
 
 def get_gestures(video):
-    # some ops on video
-    gestures_timestamp = [('00:00:10.000', '00:00:25.000'),
-        ('00:04:00.000', '00:05:00.000')]
+    keypoints = run_detection_hands(video)
+    gestures_timestamp = [('00:00:10.000', '00:00:12.000'),
+        ('00:00:20.000', '00:00:25.000')]
     return gestures_timestamp
     
 def edit_video(args):
@@ -35,8 +35,11 @@ if __name__ == '__main__':
     parser.add_argument("-fps", "--fps", default=24, help="Frame per second.")
     parser.add_argument("-vc", "--vcodec", default='libx264', help="Video codec.")
     parser.add_argument("-t", "--threads", default='1', help="Number of threads.")
+    parser.add_argument("-d", "--debug", default=False, help="Debug prints.")
     args = vars(parser.parse_args())
-   
+
+    logger = logging.getLogger("logger")
+    logger.setLevel(logging.DEBUG if args['debug'] else logging.INFO)
 
     start = time.time()
     edit_video(args)
