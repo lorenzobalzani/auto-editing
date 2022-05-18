@@ -1,5 +1,6 @@
 import moviepy.editor as mpy
 import mediapipe as mp
+import argparse
 mp_hands = mp.solutions.hands
 
 def extract_hands_keypoints(hands, frame):
@@ -23,5 +24,9 @@ def run_detection_hands(video):
     return keypoints
 
 if __name__ == '__main__':
-    video = mpy.VideoFileClip('video.mov')
+    parser = argparse.ArgumentParser(description="Help for hand pose detecgtion.",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-v", "--video", required=True, help="Path to the video.")
+    args = vars(parser.parse_args())
+    video = mpy.VideoFileClip(args['video'])
     keypoints = run_detection_hands(video)
