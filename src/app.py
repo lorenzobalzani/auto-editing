@@ -7,11 +7,26 @@ from hand_pose import run_detection_hands, draw_keypoints
 
 num_features = 42
 min_threshold = 0.5
+seconds_before_and_after_signs = datetime.timedelta(seconds=1)
 
 def get_cutoff_timestamps(gestures_detected):
-    print(gestures_detected)
-    return [('00:00:10.000', '00:00:12.000'),
-        ('00:00:20.000', '00:00:25.000')]
+    threshold = datetime.timedelta(seconds=5)
+    groups = []
+    for timestamp in gestures_detected:
+        if not groups or timestamp - group[0] > threshold:
+             group = []
+             groups.append(group)
+        group.append(timestamp)
+    if not len(groups) % 2 == 0:
+        print('Error!')
+    timestamps = []
+    for idx, group in enumerate(groups):
+        if idx % 2 == 0:
+            begin = group[0] - seconds_before_and_after_signs
+        else:
+            end = group[-1] + seconds_before_and_after_signs
+            timestamps.append((str(begin), str(end)))
+    return timestamps
 
 def get_gestures(video, fps):
     model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
@@ -23,7 +38,7 @@ def get_gestures(video, fps):
             predictions = model.predict(x)
             predicted_class = np.argmax(predictions, axis=1)
             if predictions[-1][predicted_class] > min_threshold: # minium threshold
-                gestures_detected.append(str(datetime.timedelta(seconds=(frame_idx/fps))))
+                gestures_detected.append(datetime.timedelta(seconds=(frame_idx/fps)))
     return get_cutoff_timestamps(gestures_detected)
     
 def edit_video(args):
