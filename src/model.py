@@ -71,6 +71,6 @@ if __name__ == '__main__':
     classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = 6, num_features = num_features)
     classifier.prepare_dataset(path = '../assets/dataset/keypoints.csv')
     classifier.define_model(loss='sparse_categorical_crossentropy')
-    classifier.fit(epochs = 1000, batch_size = 128)
-    classifier.evaluate(batch_size = 128)
+    classifier.fit(epochs = 1000, batch_size = 64)
+    classifier.evaluate(batch_size = 64)
     classifier.confusion_matrix(report=True)
