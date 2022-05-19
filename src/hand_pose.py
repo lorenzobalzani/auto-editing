@@ -1,19 +1,8 @@
 import moviepy.editor as mpy
 import mediapipe as mp
 import argparse
+from hand_pose_utilities import *
 mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-
-def draw_keypoints(video, keypoints, fps):
-    frames = []
-    for idx, frame in enumerate(video.iter_frames()):
-        for keypoint in keypoints[idx]:
-            mp_drawing.draw_landmarks(frame, keypoint, mp_hands.HAND_CONNECTIONS,
-                mp_drawing_styles.get_default_hand_landmarks_style(),
-                mp_drawing_styles.get_default_hand_connections_style())
-        frames.append(frame)
-    return mpy.ImageSequenceClip(frames, fps=fps)
 
 def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5, max_num_hands=2):
     """Run hand gestures detection model using Google's Mediapipe
@@ -26,15 +15,15 @@ def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5,
     max_num_hands (Int): Maximum number of hands to detect. Default to 2.
 
     Returns:
-    List[List[landmark]]: A matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
+    List[List[Tuple(landmark, pre_processed_landmarks)]]: A matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
    """
     keypoints = []
     with mp_hands.Hands(model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, max_num_hands=max_num_hands) as hands:
         for frame in video.iter_frames():
             frame_keypoints = hands.process(frame)
             if frame_keypoints.multi_hand_landmarks:
-                keypoints.append([hand_landmarks
-                    for hand_landmarks, handedness in zip(frame_keypoints.multi_hand_landmarks, frame_keypoints.multi_handedness)])
+                keypoints.append([(hand_landmarks, calc_keypoints(frame, hand_landmarks))
+                    for hand_landmarks in frame_keypoints.multi_hand_landmarks])
             else:
                 keypoints.append([])
     return keypoints
