@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import time, argparse, logging, pdb, traceback
 import datetime
-from hand_pose import run_detection_hands, draw_keypoints
+from hand_pose import run_detection_hands
 
 num_features = 42
 min_threshold = 0.5
@@ -48,15 +48,14 @@ def edit_video(args):
 
     video = mpy.VideoFileClip(input)
     cuts = get_gestures(video, args['fps'])
-    video = draw_keypoints(video, run_detection_hands(video), args['fps']) # COULD DELETE
 
     # cut file
     for cut in cuts:
         video = video.cutout(cut[0], cut[1])
 
     # save file
-    video.write_videofile(output, threads=args['threads'], fps=args['fps'], codec=args['vcodec'], 
-        preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
+    video.write_videofile(output, threads=args['threads'], remove_temp=True,
+        fps=args['fps'], codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
 
 if __name__ == '__main__':
@@ -66,7 +65,7 @@ if __name__ == '__main__':
     parser.add_argument("-o", "--output", default='output', help="Path to the output video.")                             
     parser.add_argument("-c", "--compression", default='medium',  help="Compression value. Possible values: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow.")
     parser.add_argument("-q", "--quality", default='24', help="Video quality.")
-    parser.add_argument("-fps", "--fps", default=24, help="Frame per second.")
+    parser.add_argument("-fps", "--fps", default=24, help="Frame per seconds.")
     parser.add_argument("-vc", "--vcodec", default='libx264', help="Video codec.")
     parser.add_argument("-t", "--threads", default='1', help="Number of threads.")
     parser.add_argument("-d", "--debug", default=False, help="Debug prints.")
