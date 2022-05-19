@@ -63,7 +63,7 @@ class Classifier:
             print('Classification Report')
             print(classification_report(self.y_test, y_pred))
 
-classifier = Classifier(model_save_path = '../assets/models/keypoint_classifier.hdf5', random_state = 42, num_classes = 6)
+classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = 42, num_classes = 6)
 classifier.prepare_dataset(path = '../assets/dataset/keypoints.csv')
 classifier.define_model(loss='sparse_categorical_crossentropy')
 classifier.fit(epochs = 1000, batch_size = 128)
