@@ -41,7 +41,7 @@ def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5,
     return keypoints
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Help for hand pose detecgtion.",
+    parser = argparse.ArgumentParser(description="Help for hand pose detection.",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-v", "--video", required=True, help="Path to the video.")
     args = vars(parser.parse_args())
