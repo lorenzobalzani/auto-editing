@@ -15,9 +15,6 @@ def draw_keypoints(video, keypoints, fps):
         frames.append(frame)
     return mpy.ImageSequenceClip(frames, fps=fps)
 
-def extract_hands_keypoints(hands, frame):
-    return hands.process(frame)
-
 def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5):
     """Run hand gestures detection model using Google's Mediapipe
 
@@ -33,7 +30,7 @@ def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5,
     keypoints = []
     with mp_hands.Hands(model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence) as hands:
         for frame in video.iter_frames():
-            frame_keypoints = extract_hands_keypoints(hands, frame)
+            frame_keypoints = hands.process(frame)
             if frame_keypoints.multi_hand_landmarks:
                 keypoints.append([hand_landmarks for hand_landmarks in frame_keypoints.multi_hand_landmarks])
             else:
