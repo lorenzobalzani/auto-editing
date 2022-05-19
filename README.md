@@ -30,7 +30,7 @@
   <h3 align="center">Auto editing software</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Auto edit (e.g. cut) video files by leveraging gesture recognition.
     <br />
     Â·
     <a href="https://github.com/lorenzobalzani/auto-editing/issues">Report Bug</a>
@@ -70,9 +70,6 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
 There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
 Here's why:
@@ -151,7 +148,7 @@ Contributions are what make the open source community such an amazing place to l
 
 <!-- LICENSE -->
 ## License
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the Apache License 2.0. See `LICENSE` for more information.
 
 
 <!-- CONTACT -->
@@ -179,7 +176,7 @@ If you have any question/feedback, please do not hesitate to reach out to me! ðŸ
 [issues-shield]: https://img.shields.io/github/issues/lorenzobalzani/auto-editing.svg?style=for-the-badge
 [issues-url]: https://github.com/lorenzobalzani/auto-editing/issues
 [license-shield]: https://img.shields.io/github/license/lorenzobalzani/auto-editing.svg?style=for-the-badge
-[license-url]: https://github.com/lorenzobalzani/auto-editing/blob/master/LICENSE.txt
+[license-url]: https://github.com/lorenzobalzani/auto-editing/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/lorenzobalzani
 [product-screenshot]: images/screenshot.png
