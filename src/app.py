@@ -1,6 +1,6 @@
 import moviepy.editor as mpy
 import time, argparse, logging, pdb, traceback
-from hand_pose import run_detection_hands
+from hand_pose import run_detection_hands, draw_keypoints
 
 def get_gestures(video):
     keypoints = run_detection_hands(video)
@@ -15,6 +15,7 @@ def edit_video(args):
 
     video = mpy.VideoFileClip(input)
     cuts = get_gestures(video)
+    video = draw_keypoints(video, run_detection_hands(video), args['fps']) # GIVE IT A TRY
 
     # cut file
     for cut in cuts:
