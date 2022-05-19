@@ -78,4 +78,4 @@ if __name__ == '__main__':
     start = time.time()
     edit_video(args)
     end = time.time()
-    print(f'Exporting video has finished in {float((end - start) / 60)} minutes')
+    print(f'Exporting video has finished in {str(datetime.timedelta(seconds=end-start))}.')
