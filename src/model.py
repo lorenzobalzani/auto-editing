@@ -6,21 +6,25 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
 
-class Classifier:
+num_classes = 6
+random_state = 42
+num_features = 42
 
-    def __init__(self, model_save_path, random_state, num_classes):
+class Classifier:
+    def __init__(self, model_save_path, random_state, num_classes, num_features):
         self.model_save_path = model_save_path
         self.random_state = random_state
         self.num_classes = num_classes
+        self.num_features = num_features
         
     def prepare_dataset(self, path):
-        X_dataset = np.loadtxt(path, delimiter=',', dtype='float32', usecols=list(range(1, (21 * 2) + 1)))
+        X_dataset = np.loadtxt(path, delimiter=',', dtype='float32', usecols=list(range(1, self.num_features + 1)))
         y_dataset = np.loadtxt(path, delimiter=',', dtype='int32', usecols=(0))
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_dataset, y_dataset, train_size=0.75, random_state=self.random_state)
 
     def define_model(self, loss, optimizer='adam', metrics=['accuracy'], activations='relu', last_layer_activation='softmax'):
         self.model = tf.keras.models.Sequential([
-            tf.keras.layers.Input((21 * 2, )),
+            tf.keras.layers.Input((self.num_features, )),
             tf.keras.layers.Dropout(0.2),
             tf.keras.layers.Dense(20, activation=activations),
             tf.keras.layers.Dropout(0.4),
@@ -42,7 +46,7 @@ class Classifier:
             epochs=epochs,
             batch_size=batch_size,
             validation_data=(self.X_test, self.y_test),
-            callbacks=[cp_callback]
+            callbacks=[cp_callback] # INSERT ES
         )
     
     def evaluate(self, batch_size):
@@ -63,9 +67,10 @@ class Classifier:
             print('Classification Report')
             print(classification_report(self.y_test, y_pred))
 
-classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = 42, num_classes = 6)
-classifier.prepare_dataset(path = '../assets/dataset/keypoints.csv')
-classifier.define_model(loss='sparse_categorical_crossentropy')
-classifier.fit(epochs = 1000, batch_size = 128)
-classifier.evaluate(batch_size = 128)
-classifier.confusion_matrix(report=True)
+if __name__ == '__main__':
+    classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = 6, num_features = num_features)
+    classifier.prepare_dataset(path = '../assets/dataset/keypoints.csv')
+    classifier.define_model(loss='sparse_categorical_crossentropy')
+    classifier.fit(epochs = 1000, batch_size = 128)
+    classifier.evaluate(batch_size = 128)
+    classifier.confusion_matrix(report=True)
