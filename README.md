@@ -95,7 +95,7 @@ A list of commonly used resources that I find helpful are listed in the acknowle
 TODO
 
 ### Prerequisites
-Before launch any Python file in the repo, be sure to install required depencencies, by typing in your terminal:
+Before launching any Python file in the repo, be sure to install the required dependencies, by typing in your terminal:
   ```sh
   pip install -r requirements.txt
   ```
