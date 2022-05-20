@@ -5,16 +5,12 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-def draw_keypoints(video, keypoints, fps):
-    frames = []
-    for idx, frame in enumerate(video.iter_frames()):
-        for keypoint in keypoints[idx]:
-            mp_drawing.draw_landmarks(frame, keypoint[0], mp_hands.HAND_CONNECTIONS, # access first item of the tuple since we want not pre-processed points
-                mp_drawing_styles.get_default_hand_landmarks_style(),
-                mp_drawing_styles.get_default_hand_connections_style())
-        frames.append(frame)
-    return mpy.ImageSequenceClip(frames, fps=fps)
-
+def draw_keypoints(frame, frame_keypoints):
+    for keypoint in frame_keypoints:
+        mp_drawing.draw_landmarks(frame, keypoint[0], mp_hands.HAND_CONNECTIONS, # access first item of the tuple since we want not pre-processed points
+            mp_drawing_styles.get_default_hand_landmarks_style(),
+            mp_drawing_styles.get_default_hand_connections_style())
+    return frame
 
 def pre_process_landmark(landmark_list):
     temp_landmark_list = copy.deepcopy(landmark_list)

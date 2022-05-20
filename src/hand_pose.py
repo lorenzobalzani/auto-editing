@@ -4,7 +4,7 @@ import argparse
 from hand_pose_utilities import *
 mp_hands = mp.solutions.hands
 
-def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5, max_num_hands=2):
+def run_detection_hands(video, draw_hands=False, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5, max_num_hands=2):
     """Run hand gestures detection model using Google's Mediapipe
 
     Parameters:
@@ -19,14 +19,17 @@ def run_detection_hands(video, model_complexity=1, min_detection_confidence=0.5,
    """
     keypoints = []
     with mp_hands.Hands(model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, max_num_hands=max_num_hands) as hands:
-        for frame in video.iter_frames():
+        for time, frame in video.iter_frames(with_times = True):
             frame_keypoints = hands.process(frame)
             if frame_keypoints.multi_hand_landmarks:
                 keypoints.append([(hand_landmarks, calc_keypoints(frame, hand_landmarks))
                     for hand_landmarks in frame_keypoints.multi_hand_landmarks])
             else:
                 keypoints.append([])
-    return keypoints
+            if draw_hands:
+                frame = draw_keypoints(frame, keypoints[-1])
+                # change video frame at time t
+    return keypoints, video
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Help for hand pose detection.",

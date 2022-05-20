@@ -3,10 +3,10 @@ import tensorflow as tf
 import numpy as np
 import time, argparse, logging, pdb, traceback
 import datetime
-from hand_pose import run_detection_hands
+from hand_pose import run_detection_hands, draw_keypoints
 
 num_features = 42
-min_threshold = 0.5
+min_threshold = 0.50
 seconds_before_and_after_signs = datetime.timedelta(seconds=1)
 
 def get_cutoff_timestamps(gestures_detected):
@@ -30,7 +30,7 @@ def get_cutoff_timestamps(gestures_detected):
 
 def get_gestures(video, fps):
     model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
-    keypoints = run_detection_hands(video)
+    keypoints, video = run_detection_hands(video, draw_hands = True)
     gestures_detected = []
     for frame_idx, frame in enumerate(keypoints): # frame by frame and access first item (normalized coordinates) of the tuple
         if len(frame) > 0:
@@ -38,16 +38,17 @@ def get_gestures(video, fps):
             predictions = model.predict(x)
             predicted_class = np.argmax(predictions, axis=1)
             if predictions[-1][predicted_class] > min_threshold: # minium threshold
-                gestures_detected.append(datetime.timedelta(seconds=(frame_idx/fps)))
-    return get_cutoff_timestamps(gestures_detected)
+                gestures_detected.append(datetime.timedelta(seconds=frame_idx/fps))
+    print(gestures_detected)
+    return get_cutoff_timestamps(gestures_detected), video
     
 def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
 
-    video = mpy.VideoFileClip(input)
-    cuts = get_gestures(video, args['fps'])
+    cuts, video = get_gestures(mpy.VideoFileClip(input), args['fps'])
+    #video = draw_keypoints(video, run_detection_hands(video), args['fps']) # COULD DELETE
 
     # cut file
     for cut in cuts:
