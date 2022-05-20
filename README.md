@@ -126,7 +126,7 @@ Contributions are what make the open source community such an amazing place to l
 
 <!-- LICENSE -->
 ## License
-Distributed under the Apache License 2.0. See `LICENSE` for more information.
+Distributed under the Apache License 2.0. See [`LICENSE.txt`](https://github.com/lorenzobalzani/auto-editing/blob/master/LICENSE.txt) for more information.
 
 
 <!-- CONTACT -->
