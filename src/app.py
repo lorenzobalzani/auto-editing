@@ -11,7 +11,7 @@ from config import *
 def get_gestures(video, fps):
     model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
     available_gestures = Gestures(classes_path = '../assets/dataset/labels.csv').get_available_gestures()
-    keypoints, video = run_detection_hands(video, fps, draw_hands = True)
+    keypoints, video = run_detection_hands(video, draw_hands = True)
     detected_gestures = {available_gesture: [] for available_gesture in available_gestures}
     for frame_idx, frame in enumerate(keypoints): # frame by frame and access first item (normalized coordinates) of the tuple
         if len(frame) == 0:
@@ -26,15 +26,15 @@ def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
-
-    gestures, video = get_gestures(mpy.VideoFileClip(input), args['fps'])
+    video = mpy.VideoFileClip(input)
+    gestures, video = get_gestures(video, video.fps)
     timestamps = transform_into_timestamps(gestures)
 
     for action in ['cut', 'insert_intro']:
         if action in timestamps: # if that action has not been detected
             video = operate_action(action, video, timestamps[action])
 
-    video.write_videofile(output, threads=args['threads'], remove_temp=True, fps=args['fps'], codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
+    video.write_videofile(output, threads=args['threads'], remove_temp=True, codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
 
 if __name__ == '__main__':
@@ -44,7 +44,6 @@ if __name__ == '__main__':
     parser.add_argument("-o", "--output", default='output', help="Path to the output video.")                             
     parser.add_argument("-c", "--compression", default='medium',  help="Compression value. Possible values: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow.")
     parser.add_argument("-q", "--quality", default='24', help="Video quality.")
-    parser.add_argument("-fps", "--fps", default=24, help="Frame per seconds.")
     parser.add_argument("-vc", "--vcodec", default='libx264', help="Video codec.")
     parser.add_argument("-t", "--threads", default='1', help="Number of threads.")
     parser.add_argument("-d", "--debug", default=False, help="Debug prints.")
