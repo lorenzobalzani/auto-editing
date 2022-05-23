@@ -1,62 +1,40 @@
 import moviepy.editor as mpy
 import tensorflow as tf
 import numpy as np
-import time, argparse, logging, pdb, traceback
+import time, argparse, logging
 import datetime
-from hand_pose import run_detection_hands, draw_keypoints
-
-num_features = 42
-min_threshold = 0.50
-seconds_before_and_after_signs = datetime.timedelta(seconds=1)
-
-def get_cutoff_timestamps(gestures_detected):
-    threshold = datetime.timedelta(seconds=5)
-    groups = []
-    for timestamp in gestures_detected:
-        if not groups or timestamp - group[0] > threshold:
-             group = []
-             groups.append(group)
-        group.append(timestamp)
-    if not len(groups) % 2 == 0:
-        print('Error!')
-    timestamps = []
-    for idx, group in enumerate(groups):
-        if idx % 2 == 0:
-            begin = group[0] - seconds_before_and_after_signs
-        else:
-            end = group[-1] + seconds_before_and_after_signs
-            timestamps.append((str(begin), str(end)))
-    return timestamps
+from hand_pose import run_detection_hands
+from gestures import Gestures
+from actions import *
+from config import *
 
 def get_gestures(video, fps):
     model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
-    keypoints, video = run_detection_hands(video, draw_hands = True)
-    gestures_detected = []
+    available_gestures = Gestures(classes_path = '../assets/dataset/labels.csv').get_available_gestures()
+    keypoints, video = run_detection_hands(video, fps, draw_hands = True)
+    detected_gestures = {available_gesture: [] for available_gesture in available_gestures}
     for frame_idx, frame in enumerate(keypoints): # frame by frame and access first item (normalized coordinates) of the tuple
-        if len(frame) > 0:
-            x = np.array(frame[-1][-1][:num_features]).reshape(1, num_features) # 42 is number of features
-            predictions = model.predict(x)
-            predicted_class = np.argmax(predictions, axis=1)
-            if predictions[-1][predicted_class] > min_threshold: # minium threshold
-                gestures_detected.append(datetime.timedelta(seconds=frame_idx/fps))
-    print(gestures_detected)
-    return get_cutoff_timestamps(gestures_detected), video
+        if len(frame) == 0:
+            continue
+        predictions = model.predict(np.array(frame[-1][-1][:num_features]).reshape(1, num_features))
+        predicted_gesture = np.argmax(predictions, axis=1)[0]
+        if predictions[0][predicted_gesture] > min_threshold: # minium threshold
+            detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=frame_idx/fps))
+    return detected_gestures, video
     
 def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
 
-    cuts, video = get_gestures(mpy.VideoFileClip(input), args['fps'])
-    #video = draw_keypoints(video, run_detection_hands(video), args['fps']) # COULD DELETE
+    gestures, video = get_gestures(mpy.VideoFileClip(input), args['fps'])
+    timestamps = transform_into_timestamps(gestures)
 
-    # cut file
-    for cut in cuts:
-        video = video.cutout(cut[0], cut[1])
+    for action in ['cut', 'insert_intro']:
+        if action in timestamps: # if that action has not been detected
+            video = operate_action(action, video, timestamps[action])
 
-    # save file
-    video.write_videofile(output, threads=args['threads'], remove_temp=True,
-        fps=args['fps'], codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
+    video.write_videofile(output, threads=args['threads'], remove_temp=True, fps=args['fps'], codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
 
 if __name__ == '__main__':
@@ -78,4 +56,4 @@ if __name__ == '__main__':
     start = time.time()
     edit_video(args)
     end = time.time()
-    print(f'Exporting video has finished in {str(datetime.timedelta(seconds=end-start))}.')
+    print(f'Video has been exported in {str(datetime.timedelta(seconds=end-start))}.')
