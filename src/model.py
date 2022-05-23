@@ -5,10 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
-
-num_classes = 6
-random_state = 42
-num_features = 42
+from config import *
 
 class Classifier:
     def __init__(self, model_save_path, random_state, num_classes, num_features):
@@ -20,7 +17,7 @@ class Classifier:
     def prepare_dataset(self, path):
         X_dataset = np.loadtxt(path, delimiter=',', dtype='float32', usecols=list(range(1, self.num_features + 1)))
         y_dataset = np.loadtxt(path, delimiter=',', dtype='int32', usecols=(0))
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_dataset, y_dataset, train_size=0.75, random_state=self.random_state)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_dataset, y_dataset, train_size=train_size, random_state=self.random_state)
 
     def define_model(self, loss, optimizer='adam', metrics=['accuracy'], activations='relu', last_layer_activation='softmax'):
         self.model = tf.keras.models.Sequential([
@@ -68,9 +65,9 @@ class Classifier:
             print(classification_report(self.y_test, y_pred))
 
 if __name__ == '__main__':
-    classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = 6, num_features = num_features)
+    classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = num_classes, num_features = num_features)
     classifier.prepare_dataset(path = '../assets/dataset/keypoints.csv')
     classifier.define_model(loss='sparse_categorical_crossentropy')
-    classifier.fit(epochs = 1000, batch_size = 64)
-    classifier.evaluate(batch_size = 64)
+    classifier.fit(epochs = epochs, batch_size = batch_size)
+    classifier.evaluate(batch_size = batch_size)
     classifier.confusion_matrix(report=True)
