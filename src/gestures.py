@@ -1,4 +1,3 @@
-from matplotlib.style import available
 import pandas as pd
 
 class Gestures:

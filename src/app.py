@@ -3,10 +3,10 @@ import tensorflow as tf
 import numpy as np
 import time, argparse, logging
 import datetime
-from hand_pose import run_detection_hands
+from hand_detection.hand_pose import run_detection_hands
 from gestures import Gestures
 from actions import *
-from config import *
+from hand_detection.model_config import *
 
 def get_gestures(video, fps):
     model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
@@ -30,7 +30,7 @@ def edit_video(args):
     gestures, video = get_gestures(video, video.fps)
     timestamps = transform_into_timestamps(gestures)
 
-    for action in ['cut', 'insert_intro']:
+    for action in ['insert_intro', 'cut']:
         if action in timestamps: # if that action has not been detected
             video = operate_action(action, video, timestamps[action])
 
