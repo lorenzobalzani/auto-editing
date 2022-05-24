@@ -6,14 +6,15 @@ def transform_into_timestamps(detected_gestures):
 
     def get_cut_timestamps(detected_gestures):
         groups = []
+        timestamps = []
         for timestamp in detected_gestures:
             if not groups or timestamp - group[0] > threshold:
                 group = []
                 groups.append(group)
             group.append(timestamp)
         if not len(groups) % 2 == 0:
-            print('Error!')
-        timestamps = []
+            print(f'Error! Number of cut sign detected is not even: {len(groups)}.')
+            return timestamps
         for idx, group in enumerate(groups):
             if idx % 2 == 0:
                 begin = group[0] - seconds_before_and_after_signs
