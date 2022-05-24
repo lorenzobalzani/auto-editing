@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
-from config import *
+from hand_detection.model_config import *
 
 class Classifier:
     def __init__(self, model_save_path, random_state, num_classes, num_features):
@@ -65,8 +65,8 @@ class Classifier:
             print(classification_report(self.y_test, y_pred))
 
 if __name__ == '__main__':
-    classifier = Classifier(model_save_path = '../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = num_classes, num_features = num_features)
-    classifier.prepare_dataset(path = '../assets/dataset/keypoints.csv')
+    classifier = Classifier(model_save_path = '../../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = num_classes, num_features = num_features)
+    classifier.prepare_dataset(path = '../../assets/dataset/keypoints.csv')
     classifier.define_model(loss='sparse_categorical_crossentropy')
     classifier.fit(epochs = epochs, batch_size = batch_size)
     classifier.evaluate(batch_size = batch_size)
