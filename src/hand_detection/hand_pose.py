@@ -1,7 +1,7 @@
 import moviepy.editor as mpy
 import mediapipe as mp
 import argparse
-from hand_pose_utilities import *
+from hand_detection.hand_pose_utilities import *
 mp_hands = mp.solutions.hands
 
 def run_detection_hands(video, draw_hands=False, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5, max_num_hands=2):
