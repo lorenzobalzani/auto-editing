@@ -105,8 +105,11 @@ TODO
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-TODO
+The following list includes currently supported gestures:
+ * insert video intro: ok sign;
+ * cut: closed hand sign.
 
+TODO: insert example images.
 
 <!-- ROADMAP -->
 ## Roadmap
