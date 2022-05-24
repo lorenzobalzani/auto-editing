@@ -7,4 +7,4 @@ epochs = 1000
 batch_size = 64
 
 # Model inference
-min_threshold = 0.50
+min_threshold = 0.55
