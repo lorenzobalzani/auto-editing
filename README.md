@@ -105,9 +105,10 @@ TODO
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+Be sure to flip horizontally your video before inference.
 The following list includes currently supported gestures:
- * insert video intro: ok sign;
- * cut: closed hand sign.
+ * insert video intro: one open hand sign;
+ * cut between timestamps: two closed hand signs.
 
 TODO: insert example images.
 
