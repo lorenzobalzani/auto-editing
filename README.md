@@ -14,9 +14,10 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 [![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
+[![Issues][open-issues-shield]][open-issues-url]
+[![Issues][closed-issues-shield]][closed-issues-url]
+[![Forks][forks-shield]][forks-url]
 [![Apache License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
@@ -155,8 +156,10 @@ If you have any question/feedback, please do not hesitate to reach out to me! ðŸ
 [forks-url]: https://github.com/lorenzobalzani/auto-editing/network/members
 [stars-shield]: https://img.shields.io/github/stars/lorenzobalzani/auto-editing.svg?style=for-the-badge
 [stars-url]: https://github.com/lorenzobalzani/auto-editing/stargazers
-[issues-shield]: https://img.shields.io/github/issues/lorenzobalzani/auto-editing.svg?style=for-the-badge
-[issues-url]: https://github.com/lorenzobalzani/auto-editing/issues
+[open-issues-shield]: https://img.shields.io/github/issues/lorenzobalzani/auto-editing.svg?style=for-the-badge
+[open-issues-url]: https://github.com/lorenzobalzani/auto-editing/issues
+[closed-issues-shield]: https://img.shields.io/github/issues-closed/lorenzobalzani/auto-editing.svg?style=for-the-badge
+[closed-issues-url]: https://github.com/lorenzobalzani/auto-editing/issues-closed
 [license-shield]: https://img.shields.io/github/license/lorenzobalzani/auto-editing.svg?style=for-the-badge
 [license-url]: https://github.com/lorenzobalzani/auto-editing/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
