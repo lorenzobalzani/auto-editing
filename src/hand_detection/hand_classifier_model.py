@@ -43,7 +43,7 @@ class Classifier:
             epochs=epochs,
             batch_size=batch_size,
             validation_data=(self.X_test, self.y_test),
-            callbacks=[cp_callback, es_callback] # INSERT ES
+            callbacks=[cp_callback, es_callback]
         )
     
     def evaluate(self, batch_size):
