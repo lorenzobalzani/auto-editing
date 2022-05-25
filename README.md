@@ -15,8 +15,9 @@
 -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Issues][open-issues-shield]][open-issues-url]
-[![Issues][closed-issues-shield]][closed-issues-url]
+[![Open issues][open-issues-shield]][open-issues-url]
+[![Closed issues][closed-issues-shield]][closed-issues-url]
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lorenzobalzani/auto-editing?style=for-the-badge)
 [![Forks][forks-shield]][forks-url]
 [![Apache License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
