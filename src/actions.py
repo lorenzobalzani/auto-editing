@@ -1,8 +1,10 @@
 import datetime
+import moviepy.editor as mpy
+from config import *
 
 def transform_into_timestamps(detected_gestures):
-    seconds_before_and_after_signs = datetime.timedelta(seconds=1)
-    threshold = datetime.timedelta(seconds=5)
+    seconds_before_and_after_signs = datetime.timedelta(seconds=seconds_difference_before_and_after_signs)
+    threshold = datetime.timedelta(seconds=min_seconds_between_two_signs)
 
     def get_cut_timestamps(detected_gestures):
         groups = []
@@ -45,8 +47,6 @@ def operate_action(action, video, timestamps, extra_parameters={}):
     def insert_intro(video, timestamps, extra_parameters):
         if not 'intro_video' in extra_parameters.keys():
             return video
-        for cut in timestamps:
-            video = video.cutout(cut[0], cut[1])
-        return video
+        return mpy.concatenate_videoclips([video.subclip(0, timestamps[0]), extra_parameters['intro_video'], video.subclip(timestamps[1], video.duration)], method="compose")
 
     return eval(action)(video, timestamps, extra_parameters)

@@ -26,13 +26,18 @@ def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
+    extra_parameters = {}
     video = mpy.VideoFileClip(input)
-    gestures, video = get_gestures(video, video.fps)
-    timestamps = transform_into_timestamps(gestures)
+    if not args['intro'] == None:
+        extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
 
     for action in ['insert_intro', 'cut']:
-        if action in timestamps: # if that action has not been detected
-            video = operate_action(action, video, timestamps[action])
+        # TODO: it  would be more efficent to compute gestures only once, but I don't do that because after cutting video, timestamps would change.
+        gestures, video = get_gestures(video, video.fps)
+        timestamps = transform_into_timestamps(gestures)
+        if not action in timestamps: # if the action has not been detected
+            continue
+        video = operate_action(action, video, timestamps[action], extra_parameters)
 
     video.write_videofile(output, threads=args['threads'], remove_temp=True, codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
@@ -41,6 +46,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Help for auto editing software.",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-v", "--video", required=True, help="Path to the original video.")
+    parser.add_argument("-i", "--intro", default=None, help="Path to the intro.")
     parser.add_argument("-o", "--output", default='output', help="Path to the output video.")                             
     parser.add_argument("-c", "--compression", default='medium',  help="Compression value. Possible values: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow.")
     parser.add_argument("-q", "--quality", default='24', help="Video quality.")
