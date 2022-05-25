@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
-from hand_detection.model_config import *
+from model_config import *
 
 class Classifier:
     def __init__(self, model_save_path, random_state, num_classes, num_features):
@@ -34,7 +34,7 @@ class Classifier:
     def plot_model(self):
         tf.keras.utils.plot_model(self.model, show_shapes=True)
 
-    def fit(self, epochs, batch_size, es_patience=20):
+    def fit(self, epochs, batch_size, es_patience):
         cp_callback = tf.keras.callbacks.ModelCheckpoint(self.model_save_path, verbose=1, save_weights_only=False)
         es_callback = tf.keras.callbacks.EarlyStopping(patience=es_patience, verbose=1)
         self.model.fit(
@@ -43,7 +43,7 @@ class Classifier:
             epochs=epochs,
             batch_size=batch_size,
             validation_data=(self.X_test, self.y_test),
-            callbacks=[cp_callback] # INSERT ES
+            callbacks=[cp_callback, es_callback] # INSERT ES
         )
     
     def evaluate(self, batch_size):
@@ -68,6 +68,6 @@ if __name__ == '__main__':
     classifier = Classifier(model_save_path = '../../assets/models/keypoints_classifier.hdf5', random_state = random_state, num_classes = num_classes, num_features = num_features)
     classifier.prepare_dataset(path = '../../assets/dataset/keypoints.csv')
     classifier.define_model(loss='sparse_categorical_crossentropy')
-    classifier.fit(epochs = epochs, batch_size = batch_size)
+    classifier.fit(epochs = epochs, batch_size = batch_size, es_patience=es_patience)
     classifier.evaluate(batch_size = batch_size)
     classifier.confusion_matrix(report=True)
