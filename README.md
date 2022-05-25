@@ -15,8 +15,9 @@
 -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Issues][open-issues-shield]][open-issues-url]
-[![Issues][closed-issues-shield]][closed-issues-url]
+[![Open issues][open-issues-shield]][open-issues-url]
+[![Closed issues][closed-issues-shield]][closed-issues-url]
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lorenzobalzani/auto-editing?style=for-the-badge)
 [![Forks][forks-shield]][forks-url]
 [![Apache License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
@@ -56,10 +57,9 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#usage">Usage</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -101,9 +101,6 @@ Before launching any Python file in the repo, be sure to install the required de
   pip install -r requirements.txt
   ```
 
-### Installation
-TODO
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 Be sure to flip horizontally your video before inference.
@@ -120,11 +117,12 @@ See the [open issues](https://github.com/lorenzobalzani/auto-editing/issues) for
 
 <!-- CONTRIBUTING -->
 ## Contributing
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. To contribute, please refer to the following procedure:
 
+1. Open an issue, tag it with the most relevant label and write a couple of rows about what task you'd like to perform.
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature #ISSUE_NUMBER'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
