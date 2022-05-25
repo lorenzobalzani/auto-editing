@@ -19,6 +19,7 @@ def get_gestures(video, fps):
         predictions = model.predict(np.array(frame[-1][-1][:num_features]).reshape(1, num_features))
         predicted_gesture = np.argmax(predictions, axis=1)[0]
         if predictions[0][predicted_gesture] > min_threshold: # minium threshold
+            #print('Class \'' + available_gestures[predicted_gesture] + f'\' predicted (t={frame_idx/fps} seconds) with probability: ' + str(predictions[0][predicted_gesture]))
             detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=frame_idx/fps))
     return detected_gestures, video
     
@@ -26,18 +27,18 @@ def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
-    extra_parameters = {}
+    extra_parameters = {'delta_timestamps': 0}
     video = mpy.VideoFileClip(input)
     if not args['intro'] == None:
         extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
 
+    gestures, video = get_gestures(video, video.fps)
+    timestamps = transform_into_timestamps(gestures)
+
     for action in ['insert_intro', 'cut']:
-        # TODO: it  would be more efficent to compute gestures only once, but I don't do that because after cutting video, timestamps would change.
-        gestures, video = get_gestures(video, video.fps)
-        timestamps = transform_into_timestamps(gestures)
         if not action in timestamps: # if the action has not been detected
             continue
-        video = operate_action(action, video, timestamps[action], extra_parameters)
+        video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters) # adapt new timestamps to previous action
 
     video.write_videofile(output, threads=args['threads'], remove_temp=True, codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
