@@ -6,12 +6,12 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-def draw_keypoints(frame, frame_keypoints, predicted_class, position_top_left_corner = (20, 20), bgr_color=(255, 255, 255)):
+def draw_keypoints(frame, frame_keypoints, predicted_class, position_top_left_corner = (20, 50), bgr_color=(255, 255, 255)):
     for keypoint in frame_keypoints:
         mp_drawing.draw_landmarks(frame, keypoint[0], mp_hands.HAND_CONNECTIONS, # access first item of the tuple since we want not pre-processed points
             mp_drawing_styles.get_default_hand_landmarks_style(),
             mp_drawing_styles.get_default_hand_connections_style())
-        cv.putText(frame, 'Predicted class: ' + predicted_class, position_top_left_corner,
+        cv.putText(frame, 'Predicted class: ' + predicted_class['class'] + ' - confidence: ' + str(predicted_class['confidence']) + '%', position_top_left_corner,
                cv.FONT_HERSHEY_SIMPLEX, 0.6, bgr_color, 1, cv.LINE_AA)
     return frame
 

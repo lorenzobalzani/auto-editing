@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument("-i", "--intro", default=None, help="Path to the intro.")
     parser.add_argument("-o", "--output", default='output', help="Path to the output video.")                             
     parser.add_argument("-c", "--compression", default='medium',  help="Compression value. Possible values: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow.")
-    parser.add_argument("-q", "--quality", default='24', help="Video quality.")
+    parser.add_argument("-q", "--quality", default='10', help="Video quality. 51: the worst - 0: the best (lossless).")
     parser.add_argument("-vc", "--vcodec", default='libx264', help="Video codec.")
     parser.add_argument("-t", "--threads", default='1', help="Number of threads.")
     parser.add_argument("-d", "--debug", default=False, help="Export the whole video w/ printed gestures and classifications.")

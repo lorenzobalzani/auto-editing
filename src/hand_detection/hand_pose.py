@@ -45,16 +45,16 @@ def run_detection_hands(video,
                 keypoint = [(hand_landmarks, calc_keypoints(frame, hand_landmarks))
                     for hand_landmarks in frame_keypoints.multi_hand_landmarks]
                 to_draw['keypoints'][time] = keypoint
+                to_draw['classes'][time] = {'class': 'No class', 'conficende': 0}
                 predictions = model.predict(np.array(keypoint[-1][-1][:num_features]).reshape(1, num_features))
                 predicted_gesture = np.argmax(predictions, axis=1)[0]
                 if predictions[0][predicted_gesture] > min_threshold: # minium threshold
-                    to_draw['classes'][time] = available_gestures[predicted_gesture]
+                    to_draw['classes'][time]['class'] = available_gestures[predicted_gesture]
+                    to_draw['classes'][time]['confidence'] = predictions[0][predicted_gesture] * 100
                     detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=time)) #try to change this
-                else:
-                    to_draw['classes'][time] = 'No class'
             else:
                 to_draw['keypoints'][time] = []
-                to_draw['classes'][time] = 'No class'
+                to_draw['classes'][time] = None
         if draw_hands:
             def fl(gf, t):
                 return draw_keypoints(gf(t), to_draw['keypoints'][t], to_draw['classes'][t])
