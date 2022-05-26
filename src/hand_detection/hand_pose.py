@@ -33,27 +33,31 @@ def run_detection_hands(video,
     Returns:
     List[List[Tuple(landmark, pre_processed_landmarks)]]: A matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
    """
-    keypoints_to_draw = {}
+    to_draw = {'keypoints': {}, 'classes': {}}
     model = tf.keras.models.load_model(classification_model_path)
     available_gestures = Gestures(classes_path = available_gestures_path).get_available_gestures()
     detected_gestures = {available_gesture: [] for available_gesture in available_gestures}
 
     with mp_hands.Hands(model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, max_num_hands=max_num_hands) as hands:
-        for frame_idx, (time, frame) in enumerate(video.iter_frames(with_times = True)):
+        for time, frame in video.iter_frames(with_times = True):
             frame_keypoints = hands.process(frame)
             if frame_keypoints.multi_hand_landmarks:
                 keypoint = [(hand_landmarks, calc_keypoints(frame, hand_landmarks))
                     for hand_landmarks in frame_keypoints.multi_hand_landmarks]
-                keypoints_to_draw[time] = keypoint
+                to_draw['keypoints'][time] = keypoint
                 predictions = model.predict(np.array(keypoint[-1][-1][:num_features]).reshape(1, num_features))
                 predicted_gesture = np.argmax(predictions, axis=1)[0]
                 if predictions[0][predicted_gesture] > min_threshold: # minium threshold
-                    detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=frame_idx/fps))
+                    to_draw['classes'][time] = available_gestures[predicted_gesture]
+                    detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=time)) #try to change this
+                else:
+                    to_draw['classes'][time] = 'No class'
             else:
-                keypoints_to_draw[time] = []
+                to_draw['keypoints'][time] = []
+                to_draw['classes'][time] = 'No class'
         if draw_hands:
             def fl(gf, t):
-                return draw_keypoints(gf(t), keypoints_to_draw[t], )
+                return draw_keypoints(gf(t), to_draw['keypoints'][t], to_draw['classes'][t])
             video = video.transform(fl, apply_to=["mask"])
         return detected_gestures, video
 
