@@ -39,10 +39,19 @@ def transform_into_timestamps(detected_gestures):
 
 def operate_action(action, video, timestamps, extra_parameters={}):
     def calculate_delta_seconds(deleted_seconds, added_seconds):
-        value = deleted_seconds['begin'] - deleted_seconds['end']
+        """When an operation is performed, the whole duration of the clip changes. Thus, previous detected gestures need to adjust thei timestamps as well.
+        Parameters:
+        deleted_seconds (Dict['begin', 'end']: A dictionary with two keys. Begin and end of a cut.
+        added_seconds (List[Int]): Each number represents the duration of an added video.
+
+        Returns:
+        delta_seconds (Int): The number of seconds that differ the new video from the old one. 
+            A positive number means that the new video is longer than the old one and vice-versa.
+        """
+        delta_seconds = deleted_seconds['begin'] - deleted_seconds['end']
         for added_second in added_seconds:
-            value += added_second
-        return value
+            delta_seconds += added_second
+        return delta_seconds
 
     def insert_intro(video, timestamps, extra_parameters):
         if not 'intro_video' in extra_parameters.keys():
