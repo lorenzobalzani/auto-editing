@@ -26,18 +26,18 @@ def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
-    extra_parameters = {}
+    extra_parameters = {'delta_timestamps': 0}
     video = mpy.VideoFileClip(input)
     if not args['intro'] == None:
         extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
 
-    for action in ['insert_intro', 'cut']:
-        # TODO: it  would be more efficent to compute gestures only once, but I don't do that because after cutting video, timestamps would change.
-        gestures, video = get_gestures(video, video.fps)
-        timestamps = transform_into_timestamps(gestures)
+    gestures, video = get_gestures(video, video.fps)
+    timestamps = transform_into_timestamps(gestures)
+
+    for action in ['insert_intro', 'cut']: # TODO: if they're switched, they won't work
         if not action in timestamps: # if the action has not been detected
             continue
-        video = operate_action(action, video, timestamps[action], extra_parameters)
+        video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters)
 
     video.write_videofile(output, threads=args['threads'], remove_temp=True, codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
