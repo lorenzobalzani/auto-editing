@@ -34,6 +34,7 @@
   <p align="center">
     Auto edit (e.g. cut) video files by leveraging gesture recognition.
     <br />
+    <a href="https://github.com/lorenzobalzani/auto-editing/fork">Fork</a>
     ·
     <a href="https://github.com/lorenzobalzani/auto-editing/issues">Report Bug</a>
     ·
@@ -53,13 +54,9 @@
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#usage">Usage</a></li>
-      </ul>
-    </li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#launch">Launch</a></li>
+    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -86,34 +83,67 @@ A list of commonly used resources that I find helpful are listed in the acknowle
 ### Built With
 * [Python 3.8](https://www.python.org)
 * [MoviePy](https://github.com/Zulko/moviepy)
-* [OpenCV](https://github.com/opencv/opencv)
 * [Tensorflow 2](https://github.com/tensorflow/tensorflow)
-
-
-
-<!-- GETTING STARTED -->
-## Getting Started
-TODO
+* [OpenCV](https://github.com/opencv/opencv)
 
 ### Prerequisites
-Before launching any Python file in the repo, be sure to install the required dependencies, by typing in your terminal:
+Before launching any Python file in the repo, be sure to install the required dependencies by typing in your terminal:
   ```sh
   pip install -r requirements.txt
   ```
+  
+### Launch
+To launch the application from the *CLI*, navigate to the application's root directory and type the following commands:
+```sh
+  python3 app.py
+```
+A brief guide will pop up:
+```sh
+  python3 app.py [-h] -v VIDEO [-i INTRO] [-o OUTPUT] [-c COMPRESSION] [-q QUALITY] [-vc VCODEC] [-t THREADS] [-d DEBUG]
+```
+As you can see, only the argument `video` is mandatory, while the others have default values. For a more comprehensive list of arguments, type the following commands:
+```sh
+  python3 app.py -h
+```
+The complete helper will be displayed:
 
-<!-- USAGE EXAMPLES -->
+```console
+usage: app.py [-h] -v VIDEO [-i INTRO] [-o OUTPUT] [-c COMPRESSION] [-q QUALITY] [-vc VCODEC] [-t THREADS] [-d DEBUG]
+
+Help for auto editing software.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v VIDEO, --video VIDEO
+                        Path to the original video. (default: None)
+  -i INTRO, --intro INTRO
+                        Path to the intro. (default: None)
+  -o OUTPUT, --output OUTPUT
+                        Path to the output video. (default: output)
+  -c COMPRESSION, --compression COMPRESSION
+                        Compression value. Possible values: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow. (default:
+                        medium)
+  -q QUALITY, --quality QUALITY
+                        Video quality. 51: the worst - 0: the best (lossless). (default: 10)
+  -vc VCODEC, --vcodec VCODEC
+                        Video codec. (default: libx264)
+  -t THREADS, --threads THREADS
+                        Number of threads. (default: 1)
+  -d DEBUG, --debug DEBUG
+                        Export the whole video w/ printed gestures and classifications. (default: False)
+```
+
 ## Usage
-Be sure to flip horizontally your video before inference.
-The following list includes currently supported gestures:
- * insert video intro: one open hand sign;
- * cut between timestamps: two closed hand signs.
 
-TODO: insert example images.
+The following list includes currently supported gestures:
+ * insert video intro: opened hand sign (N_GESTURE = 1);
+ * cut between timestamps: closed hand sign (N_GESTURE = 2).
+
+:warning: **Be sure to horizontally flip your video before using the software.** :warning:
 
 <!-- ROADMAP -->
 ## Roadmap
 See the [open issues](https://github.com/lorenzobalzani/auto-editing/issues) for a list of proposed features (and known issues).
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -144,7 +174,7 @@ Distributed under the Apache License 2.0. See [`LICENSE.txt`](https://github.com
 &nbsp; &nbsp;
 <a href="https://lorenzobalzani.github.io/"><img src="https://images.vexels.com/media/users/3/205387/isolated/preview/9e5a4a16e78a187fc3e47fc6e2c5f03a-internet-website-icon-stroke.png" width="30px" alt="website"></a> 
 </br>
-If you have any question/feedback, please do not hesitate to reach out to me! 💬
+If you have any questions/feedback, please do not hesitate to reach out to me! 💬
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
