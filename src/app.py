@@ -4,23 +4,7 @@ import numpy as np
 import time, argparse, logging
 import datetime
 from hand_detection.hand_pose import run_detection_hands
-from gestures import Gestures
 from actions import *
-from hand_detection.model_config import *
-
-def get_gestures(video, fps, debug):
-    model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
-    available_gestures = Gestures(classes_path = '../assets/dataset/labels.csv').get_available_gestures()
-    keypoints, video = run_detection_hands(video, draw_hands = debug)
-    detected_gestures = {available_gesture: [] for available_gesture in available_gestures}
-    for frame_idx, frame in enumerate(keypoints): # frame by frame and access first item (normalized coordinates) of the tuple
-        if len(frame) == 0:
-            continue
-        predictions = model.predict(np.array(frame[-1][-1][:num_features]).reshape(1, num_features))
-        predicted_gesture = np.argmax(predictions, axis=1)[0]
-        if predictions[0][predicted_gesture] > min_threshold: # minium threshold
-            detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=frame_idx/fps))
-    return detected_gestures, video
     
 def edit_video(args):
     input = args['video']
@@ -31,7 +15,10 @@ def edit_video(args):
     if not args['intro'] == None:
         extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
 
-    gestures, video = get_gestures(video, video.fps, args['debug'])
+    gestures, video = run_detection_hands(video, video.fps, \
+                                        '../assets/models/keypoints_classifier.hdf5', \
+                                        '../assets/dataset/labels.csv', \
+                                        draw_hands = args['debug'])
     timestamps = transform_into_timestamps(gestures)
 
     actions = ['insert_intro', 'cut'] if not args['debug'] else []
