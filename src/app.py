@@ -8,10 +8,10 @@ from gestures import Gestures
 from actions import *
 from hand_detection.model_config import *
 
-def get_gestures(video, fps):
+def get_gestures(video, fps, debug):
     model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
     available_gestures = Gestures(classes_path = '../assets/dataset/labels.csv').get_available_gestures()
-    keypoints, video = run_detection_hands(video, draw_hands = True)
+    keypoints, video = run_detection_hands(video, draw_hands = debug)
     detected_gestures = {available_gesture: [] for available_gesture in available_gestures}
     for frame_idx, frame in enumerate(keypoints): # frame by frame and access first item (normalized coordinates) of the tuple
         if len(frame) == 0:
@@ -31,10 +31,12 @@ def edit_video(args):
     if not args['intro'] == None:
         extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
 
-    gestures, video = get_gestures(video, video.fps)
+    gestures, video = get_gestures(video, video.fps, args['debug'])
     timestamps = transform_into_timestamps(gestures)
 
-    for action in ['insert_intro', 'cut']: # TODO: if they're switched, they won't work
+    actions = ['insert_intro', 'cut'] if not args['debug'] else []
+
+    for action in actions: # TODO: if they're switched, they won't work
         if not action in timestamps: # if the action has not been detected
             continue
         video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters)
@@ -52,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument("-q", "--quality", default='24', help="Video quality.")
     parser.add_argument("-vc", "--vcodec", default='libx264', help="Video codec.")
     parser.add_argument("-t", "--threads", default='1', help="Number of threads.")
-    parser.add_argument("-d", "--debug", default=False, help="Debug prints.")
+    parser.add_argument("-d", "--debug", default=False, help="Export the whole video w/ printed gestures and classifications.")
     args = vars(parser.parse_args())
 
     logger = logging.getLogger("logger")

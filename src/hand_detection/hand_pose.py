@@ -17,19 +17,23 @@ def run_detection_hands(video, draw_hands=False, model_complexity=1, min_detecti
     Returns:
     List[List[Tuple(landmark, pre_processed_landmarks)]]: A matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
    """
-    keypoints = []
+    keypoints = {'toDraw': {}, 'toReturn': []}
     with mp_hands.Hands(model_complexity=model_complexity, min_detection_confidence=min_detection_confidence, min_tracking_confidence=min_tracking_confidence, max_num_hands=max_num_hands) as hands:
         for time, frame in video.iter_frames(with_times = True):
             frame_keypoints = hands.process(frame)
             if frame_keypoints.multi_hand_landmarks:
-                keypoints.append([(hand_landmarks, calc_keypoints(frame, hand_landmarks))
-                    for hand_landmarks in frame_keypoints.multi_hand_landmarks])
+                keypoint = [(hand_landmarks, calc_keypoints(frame, hand_landmarks))
+                    for hand_landmarks in frame_keypoints.multi_hand_landmarks]
+                keypoints['toReturn'].append(keypoint)
+                keypoints['toDraw'][time] = keypoint
             else:
-                keypoints.append([])
-            if draw_hands:
-                frame = draw_keypoints(frame, keypoints[-1])
-            # TODO: change video frame at time t
-    return keypoints, video
+                keypoints['toReturn'].append([])
+                keypoints['toDraw'][time] = []
+        if draw_hands:
+            def fl(gf, t):
+                return draw_keypoints(gf(t), keypoints['toDraw'][t])
+            video = video.transform(fl, apply_to=["mask"])
+        return keypoints['toReturn'], video
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Help for hand pose detection.",
