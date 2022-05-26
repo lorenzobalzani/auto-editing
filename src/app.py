@@ -19,7 +19,6 @@ def get_gestures(video, fps):
         predictions = model.predict(np.array(frame[-1][-1][:num_features]).reshape(1, num_features))
         predicted_gesture = np.argmax(predictions, axis=1)[0]
         if predictions[0][predicted_gesture] > min_threshold: # minium threshold
-            #print('Class \'' + available_gestures[predicted_gesture] + f'\' predicted (t={frame_idx/fps} seconds) with probability: ' + str(predictions[0][predicted_gesture]))
             detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=frame_idx/fps))
     return detected_gestures, video
     
