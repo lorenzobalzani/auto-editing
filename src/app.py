@@ -35,10 +35,10 @@ def edit_video(args):
     gestures, video = get_gestures(video, video.fps)
     timestamps = transform_into_timestamps(gestures)
 
-    for action in ['insert_intro', 'cut']:
+    for action in ['insert_intro', 'cut']: # TODO: if they're switched, they won't work
         if not action in timestamps: # if the action has not been detected
             continue
-        video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters) # adapt new timestamps to previous action
+        video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters)
 
     video.write_videofile(output, threads=args['threads'], remove_temp=True, codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
