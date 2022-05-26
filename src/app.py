@@ -4,23 +4,7 @@ import numpy as np
 import time, argparse, logging
 import datetime
 from hand_detection.hand_pose import run_detection_hands
-from gestures import Gestures
 from actions import *
-from hand_detection.model_config import *
-
-def get_gestures(video, fps):
-    model = tf.keras.models.load_model('../assets/models/keypoints_classifier.hdf5')
-    available_gestures = Gestures(classes_path = '../assets/dataset/labels.csv').get_available_gestures()
-    keypoints, video = run_detection_hands(video, draw_hands = True)
-    detected_gestures = {available_gesture: [] for available_gesture in available_gestures}
-    for frame_idx, frame in enumerate(keypoints): # frame by frame and access first item (normalized coordinates) of the tuple
-        if len(frame) == 0:
-            continue
-        predictions = model.predict(np.array(frame[-1][-1][:num_features]).reshape(1, num_features))
-        predicted_gesture = np.argmax(predictions, axis=1)[0]
-        if predictions[0][predicted_gesture] > min_threshold: # minium threshold
-            detected_gestures[available_gestures[predicted_gesture]].append(datetime.timedelta(seconds=frame_idx/fps))
-    return detected_gestures, video
     
 def edit_video(args):
     input = args['video']
@@ -31,10 +15,15 @@ def edit_video(args):
     if not args['intro'] == None:
         extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
 
-    gestures, video = get_gestures(video, video.fps)
+    gestures, video = run_detection_hands(video, video.fps, \
+                                        '../assets/models/keypoints_classifier.hdf5', \
+                                        '../assets/dataset/labels.csv', \
+                                        draw_hands = args['debug'])
     timestamps = transform_into_timestamps(gestures)
 
-    for action in ['insert_intro', 'cut']: # TODO: if they're switched, they won't work
+    actions = ['insert_intro', 'cut'] if not args['debug'] else []
+
+    for action in actions: # TODO: if they're switched, they won't work
         if not action in timestamps: # if the action has not been detected
             continue
         video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters)
@@ -49,10 +38,10 @@ if __name__ == '__main__':
     parser.add_argument("-i", "--intro", default=None, help="Path to the intro.")
     parser.add_argument("-o", "--output", default='output', help="Path to the output video.")                             
     parser.add_argument("-c", "--compression", default='medium',  help="Compression value. Possible values: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow.")
-    parser.add_argument("-q", "--quality", default='24', help="Video quality.")
+    parser.add_argument("-q", "--quality", default='10', help="Video quality. 51: the worst - 0: the best (lossless).")
     parser.add_argument("-vc", "--vcodec", default='libx264', help="Video codec.")
     parser.add_argument("-t", "--threads", default='1', help="Number of threads.")
-    parser.add_argument("-d", "--debug", default=False, help="Debug prints.")
+    parser.add_argument("-d", "--debug", default=False, help="Export the whole video w/ printed gestures and classifications.")
     args = vars(parser.parse_args())
 
     logger = logging.getLogger("logger")
