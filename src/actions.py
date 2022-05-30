@@ -21,13 +21,13 @@ def transform_into_timestamps(detected_gestures):
                 begin = group[0] - seconds_before_and_after_signs
             else:
                 end = group[-1] + seconds_before_and_after_signs
-                timestamps.append((begin.total_seconds(), end.total_seconds()))
+                timestamps.append({'begin': begin.total_seconds(), 'end': end.total_seconds()})
         return timestamps
 
     def get_insert_intro_timestamps(detected_gestures):
         begin = min(detected_gestures) - seconds_before_and_after_signs
         end = max(detected_gestures) + seconds_before_and_after_signs
-        timestamps = (begin.total_seconds(), end.total_seconds())
+        timestamps = [{'begin': begin.total_seconds(), 'end': end.total_seconds()}]
         return timestamps
 
     timestamps = {}
@@ -38,34 +38,32 @@ def transform_into_timestamps(detected_gestures):
     return timestamps
 
 def operate_action(action, video, timestamps, extra_parameters={}):
-    def calculate_delta_seconds(deleted_seconds, added_seconds):
-        '''When an operation takes place, the whole duration of the clip changes. Thus, previously detected gestures need to adjust their timestamps as well.
-        Parameters:
-        deleted_seconds (Dict['begin', 'end']: A dictionary with two keys. Begin and end of a cut.
-        added_seconds (List[Int]): Each number represents the duration of an added video.
+    ''' Operate an action on the input video.
+    Parameters:
+    action (String): name of the action to be performed.
+    video (moviepy.editor.VideoFileClip): input video. 
+    timestamps (List[Dict[begin, end]]): list of timestamps.
+    extra_parameters (Dict[parameter]): dict with extra parameters.
 
-        Returns:
-        delta_seconds (Int): The number of seconds that differ the new video from the old one. 
-            A positive number means that the new video is longer than the old one and vice-versa.
-        '''
-        delta_seconds = deleted_seconds['begin'] - deleted_seconds['end']
-        for added_second in added_seconds:
-            delta_seconds += added_second
-        return delta_seconds
+    Returns:
+    new_video (moviepy.editor.VideoFileClip): edited video. 
+    delta_seconds (Int): when an operation takes place, the whole duration of the clip changes. Thus, previously detected gestures need to adjust their timestamps as well.
+    '''
 
     def insert_intro(video, timestamps, extra_parameters):
         if not 'intro_video' in extra_parameters.keys():
             return video
-        part_1 = video.subclip(0, timestamps[0])
+        timestamps = timestamps[0]
+        part_1 = video.subclip(0, timestamps['begin'])
         part_2 = extra_parameters['intro_video']
-        part_3 = video.subclip(timestamps[1], video.duration)
+        part_3 = video.subclip(timestamps['end'], video.duration)
         new_video = mpy.concatenate_videoclips([part_1, part_2, part_3], method='compose')
-        return new_video, calculate_delta_seconds({'begin': timestamps[0], 'end': timestamps[1]}, [extra_parameters['intro_video'].duration])
+        return new_video, timestamps['begin'] - timestamps['end'] + extra_parameters['intro_video'].duration
 
     def cut(video, timestamps, extra_parameters):
         for cut in timestamps:
-            video = video.cutout(cut[0] + extra_parameters['delta_timestamps'], cut[1] + extra_parameters['delta_timestamps'])
-        return video, calculate_delta_seconds({'begin': cut[0], 'end': cut[1]}, [extra_parameters['delta_timestamps']])
+            new_video = video.cutout(cut['begin'], cut['end'])
+        return new_video, cut['begin'] - cut['end']   
 
-    video, delta_seconds = locals()[action](video, timestamps, extra_parameters)
-    return video, delta_seconds
+    new_video, delta_seconds = locals()[action](video, timestamps, extra_parameters)
+    return new_video, delta_seconds

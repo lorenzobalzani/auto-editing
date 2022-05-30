@@ -10,7 +10,9 @@ def edit_video(args):
     input = args['video']
     extension = input.split('.')[-1]
     output = args['output'] + '.' + extension
-    extra_parameters = {'delta_timestamps': 0}
+    extra_parameters = {}
+    delta_seconds = 0
+  
     video = mpy.VideoFileClip(input)
     if not args['intro'] == None:
         extra_parameters['intro_video'] = mpy.VideoFileClip(args['intro'])
@@ -22,12 +24,15 @@ def edit_video(args):
     timestamps = transform_into_timestamps(gestures)
 
     actions = ['insert_intro', 'cut'] if not args['debug'] else []
-
-    for action in actions: # TODO: if they're switched, they won't work
+      
+    for action in actions:
         if not action in timestamps: # if the action has not been detected
             continue
-        video, extra_parameters['delta_timestamps'] = operate_action(action, video, timestamps[action], extra_parameters)
-
+        for timestamp in timestamps[action]:
+            timestamp['begin'] += delta_seconds
+            timestamp['end'] += delta_seconds
+        video, delta_seconds = operate_action(action, video, timestamps[action], extra_parameters)
+        
     video.write_videofile(output, threads=args['threads'], remove_temp=True, codec=args['vcodec'], preset=args['compression'], ffmpeg_params=['-crf', args['quality']])
     video.close()
 
