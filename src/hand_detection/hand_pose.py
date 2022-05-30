@@ -17,7 +17,7 @@ def run_detection_hands(video,
                         min_detection_confidence=0.5, 
                         min_tracking_confidence=0.5, 
                         max_num_hands=2):
-    """Run hand gestures detection model using Google's Mediapipe
+    '''Run hand gestures detection model using Google's Mediapipe
 
     Parameters:
     video (moviepy.editor.VideoFileClip): Input video.
@@ -30,7 +30,7 @@ def run_detection_hands(video,
 
     Returns:
     List[List[Tuple(landmark, pre_processed_landmarks)]]: A matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
-   """
+   '''
     to_draw = {'keypoints': {}, 'classes': {}}
     model = tf.keras.models.load_model(classification_model_path)
     available_gestures = Gestures(classes_path = available_gestures_path).get_available_gestures()
@@ -56,13 +56,13 @@ def run_detection_hands(video,
         if draw_hands:
             def fl(gf, t):
                 return draw_keypoints(gf(t), to_draw['keypoints'][t], to_draw['classes'][t])
-            video = video.transform(fl, apply_to=["mask"])
+            video = video.transform(fl, apply_to=['mask'])
         return detected_gestures, video
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Help for hand pose detection.",
+    parser = argparse.ArgumentParser(description='Help for hand pose detection.',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-v", "--video", required=True, help="Path to the video.")
+    parser.add_argument('-v', '--video', required=True, help='Path to the video.')
     args = vars(parser.parse_args())
     video = mpy.VideoFileClip(args['video'])
     keypoints = run_detection_hands(video)
