@@ -10,7 +10,6 @@ import tensorflow as tf
 mp_hands = mp.solutions.hands
 
 def run_detection_hands(video, 
-                        fps, 
                         classification_model_path, 
                         available_gestures_path, 
                         draw_hands=False, 
@@ -22,7 +21,6 @@ def run_detection_hands(video,
 
     Parameters:
     video (moviepy.editor.VideoFileClip): Input video.
-    fps (Int): fps of the original video.
     classification_model_path (String): path to TF classification model.
     available_gestures_path (String): path to CSV that includes gestures.
     model_complexity (Int): Complexity of the hand landmark model: 0 or 1. Landmark accuracy as well as inference latency generally go up with the model complexity. Default to 1.
