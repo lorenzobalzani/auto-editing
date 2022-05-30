@@ -20,16 +20,16 @@ def run_detection_hands(video,
     '''Run hand gestures detection model using Google's Mediapipe
 
     Parameters:
-    video (moviepy.editor.VideoFileClip): Input video.
+    video (moviepy.editor.VideoFileClip): input video.
     classification_model_path (String): path to TF classification model.
     available_gestures_path (String): path to CSV that includes gestures.
-    model_complexity (Int): Complexity of the hand landmark model: 0 or 1. Landmark accuracy as well as inference latency generally go up with the model complexity. Default to 1.
-    min_detection_confidence (Float): Minimum confidence value ([0.0, 1.0]) from the hand detection model for the detection to be considered successful. Default to 0.5.
-    min_tracking_confidence (Float): Minimum confidence value ([0.0, 1.0]) from the landmark-tracking model for the hand landmarks to be considered tracked successfully, or otherwise hand detection will be invoked automatically on the next input image. 
-    max_num_hands (Int): Maximum number of hands to detect. Default to 2.
+    model_complexity (Int): complexity of the hand landmark model: 0 or 1. Landmark accuracy as well as inference latency generally go up with the model complexity. Default to 1.
+    min_detection_confidence (Float): minimum confidence value ([0.0, 1.0]) from the hand detection model for the detection to be considered successful. Default to 0.5.
+    min_tracking_confidence (Float): minimum confidence value ([0.0, 1.0]) from the landmark-tracking model for the hand landmarks to be considered tracked successfully, or otherwise hand detection will be invoked automatically on the next input image. 
+    max_num_hands (Int): maximum number of hands to detect. Default to 2.
 
     Returns:
-    List[List[Tuple(landmark, pre_processed_landmarks)]]: A matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
+    List[List[Tuple(landmark, pre_processed_landmarks)]]: matrix of keypoints. Rows represent frames, columns represent detected 3D keypoints. 
    '''
     to_draw = {'keypoints': {}, 'classes': {}}
     model = tf.keras.models.load_model(classification_model_path)
