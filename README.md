@@ -152,9 +152,11 @@ Contributions are what make the open source community such an amazing place to l
 1. Open an issue, tag it with the most relevant label and write a couple of rows about what task you'd like to perform.
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature #ISSUE_NUMBER'`)
+3. Commit your Changes [^bignote] (`git commit -m 'Add some AmazingFeature #ISSUE_NUMBER'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+[^bignote]: Use conventional commit messages whenever you commit changes, as these help me understand your contribution better and track your changes. If you are not familiar with conventional commit messages, you can find a good introduction under [this link](https://www.conventionalcommits.org/en/v1.0.0/). Please refrain from using non-descriptive commit messages or filing large changes as a single commit.
 
 
 <!-- LICENSE -->
