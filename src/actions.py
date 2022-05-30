@@ -34,7 +34,7 @@ def transform_into_timestamps(detected_gestures):
     for gesture_type in detected_gestures.keys():
         if len(detected_gestures[gesture_type]) == 0:
             continue
-        timestamps[gesture_type] = eval('get_' + gesture_type + '_timestamps')(detected_gestures[gesture_type])
+        timestamps[gesture_type] = locals()['get_' + gesture_type + '_timestamps'](detected_gestures[gesture_type])
     return timestamps
 
 def operate_action(action, video, timestamps, extra_parameters={}):
@@ -67,5 +67,5 @@ def operate_action(action, video, timestamps, extra_parameters={}):
             video = video.cutout(cut[0] + extra_parameters['delta_timestamps'], cut[1] + extra_parameters['delta_timestamps'])
         return video, calculate_delta_seconds({'begin': cut[0], 'end': cut[1]}, [extra_parameters['delta_timestamps']])
 
-    video, delta_seconds = eval(action)(video, timestamps, extra_parameters)
+    video, delta_seconds = locals()[action](video, timestamps, extra_parameters)
     return video, delta_seconds
